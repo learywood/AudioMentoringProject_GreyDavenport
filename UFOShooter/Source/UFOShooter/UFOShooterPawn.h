@@ -59,6 +59,11 @@ public:
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
 
+	/* Public event*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "MyEvents")
+		void SoundStart();
+
+
 private:
 
 	/* Flag to control firing  */

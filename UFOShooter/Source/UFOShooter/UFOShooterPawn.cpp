@@ -124,7 +124,7 @@ void AUFOShooterPawn::FireShot(FVector FireDirection)
 			// try and play the sound if specified
 			if (FireSound != nullptr)
 			{
-				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+				SoundStart();
 			}
 
 			bCanFire = false;
