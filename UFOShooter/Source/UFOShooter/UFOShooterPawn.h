@@ -25,7 +25,6 @@ class AUFOShooterPawn : public APawn
 
 public:
 	AUFOShooterPawn();
-
 	/** Offset from the ships location to spawn projectiles */
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite )
 	FVector GunOffset;
@@ -59,9 +58,15 @@ public:
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
 
-	/* Public event*/
+	/* Public events*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "MyEvents")
 		void SoundStart();
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "MyEvents")
+		void MoveStart();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "MyEvents")
+		void MoveStop();
 
 
 private:
