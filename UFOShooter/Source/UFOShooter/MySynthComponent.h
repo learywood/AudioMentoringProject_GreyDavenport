@@ -15,6 +15,22 @@
 // the frequency. 
 // ========================================================================
 
+class MyDelay {
+
+public:
+	MyDelay() {}
+	~MyDelay();
+
+	void WriteSoundData(float* data, int count);
+	void Init(const int32 SampleRate);
+
+private:
+	float* buffer;
+	int size;
+	int position;
+	float decay;
+};
+
 UCLASS(ClassGroup = Synth, meta = (BlueprintSpawnableComponent))
 class UFOSHOOTER_API UMySynthComponent : public USynthComponent
 {
@@ -44,17 +60,6 @@ public:
 protected:
 	// A simple oscillator class. Can also generate Saw/Square/Tri/Noise.
 	Audio::FOsc Osc;
+	MyDelay Delay;
 };
 
-class MyDelay {
-	public: 
-		MyDelay(float time, float decay);
-		~MyDelay();
-		void WriteSoundData(float* data, int count);
-
-	private:
-		float* buffer;
-		int size;
-		int position;
-		float decay;
-};

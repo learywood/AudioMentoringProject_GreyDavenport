@@ -2,8 +2,6 @@
 
 #include "MySynthComponent.h"
 
-MyDelay* delay = new MyDelay(1.0f, 0.50f);
-
 void UMySynthComponent::Init(const int32 SampleRate)
 {
 	NumChannels = 1;
@@ -14,17 +12,14 @@ void UMySynthComponent::Init(const int32 SampleRate)
 	Osc.SetGain(1.0f);
 	Osc.Start();
 
-}
-
-MyDelay::MyDelay(float time, float decay) : position(0), decay(decay)
-{
-	size = (int)(time * 44100);
-	buffer = new float[size];
-	memset(buffer, 0, size);
+	Delay.Init(SampleRate);
 }
 
 MyDelay::~MyDelay() {
-	delete[] buffer;
+	if (buffer)
+	{
+		delete[] buffer;
+	}
 }
 
 void MyDelay::WriteSoundData(float* data, int count) {
@@ -38,6 +33,11 @@ void MyDelay::WriteSoundData(float* data, int count) {
 		if (position >= size)
 			position = 0;
 	}
+}
+
+void MyDelay::Init(const int32 SampleRate)
+{
+
 }
 
 void UMySynthComponent::OnGenerateAudio(TArray<float>& OutAudio)
