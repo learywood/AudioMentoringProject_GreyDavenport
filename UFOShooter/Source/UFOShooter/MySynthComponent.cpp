@@ -16,62 +16,45 @@ void UMySynthComponent::Init(const int32 SampleRate)
 }
 
 MyDelay::~MyDelay() {
-	if (buffer)
-	{
-		delete[] buffer;
-	}
+
 }
 
-void MyDelay::WriteSoundData(float* data, int count) {
-	for (int i = 0; i < count; ++i) {
-		// Mix sample with the one stored in the buffer at position
-		data[i] = (float)(data[i] + buffer[position] * decay);
-		// Record this new value in the buffer at position
-		buffer[position] = data[i];
-		// Increment buffer position wrapping around
-		++position;
-		if (position >= size)
-			position = 0;
+void MyDelay::OnGenerateAudio(const TArray<float>& InAudio, TArray<float>& OutAudio)
+{
+	float Hold = InAudio[position];
+	OutAudio[position] = (InAudio[position] + buffer[position]) * 0.5f;
+	UE_LOG(LogTemp, Warning, TEXT("This is the current position = %d"), position);
+	UE_LOG(LogTemp, Warning, TEXT("This is the current buffer at ^^^ = %d"), buffer[position]);
+	buffer[position] = Hold;
+	//UE_LOG(LogTemp, Warning, TEXT("Yep %d"), buffer[position]);
+	
+	position++;
+	if (position == size)
+	{
+		position = 0;
 	}
+
 }
 
 void MyDelay::Init(const int32 SampleRate)
 {
-
+	
+	size = DelayValue * SampleRate;
+	UE_LOG(LogTemp, Warning, TEXT("This is the Size = %d"), size);
+	buffer.Init(0, size);
+	int CurrentIndex = 0;
 }
 
 void UMySynthComponent::OnGenerateAudio(TArray<float>& OutAudio)
 {
-	
-	float size = DelayValue * 44100;
-	int32* buffer = new int32[(int)size];
-	memset(buffer, 0, size);
-	int CurrentIndex = 0;
-	float decay = 1;
-	float decayint = decay;
-
 	// Perform DSP operations here
 	for (int32 Sample = 0; Sample < OutAudio.Num(); ++Sample)
 	{
-		if (DelayToggle == true)
-		{
-			OutAudio[Sample] = (buffer[CurrentIndex] + Osc.Generate()) * 0.5f;
-			buffer[CurrentIndex] = OutAudio[Sample];
-			
-			if (CurrentIndex == size)
-			{
-				CurrentIndex = 0;
-			}
-			
-			//UE_LOG(LogTemp, Warning, TEXT("Delay %d"), buffer[CurrentIndex]);
-			
-			CurrentIndex++;
-		}
-		else
-		{
 			OutAudio[Sample] = Osc.Generate();
-		}
 	}
+	//UE_LOG(LogTemp, Warning, TEXT("Yep"));
+	if(DelayToggle == true)
+		Delay.OnGenerateAudio(OutAudio, OutAudio);
 }
 
 void UMySynthComponent::SetFrequency(const float InFrequencyHz)

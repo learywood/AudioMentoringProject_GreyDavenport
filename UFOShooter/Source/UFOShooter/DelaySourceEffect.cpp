@@ -12,6 +12,7 @@ DelaySourceEffect::~DelaySourceEffect()
 
 void DelaySourceEffect::Init(const FSoundEffectSourceInitData & InSampleRate)
 {
+
 }
 
 void DelaySourceEffect::ProcessAudio(const FSoundEffectSourceInputData & InData, FSoundEffectSourceOutputData & OutData)

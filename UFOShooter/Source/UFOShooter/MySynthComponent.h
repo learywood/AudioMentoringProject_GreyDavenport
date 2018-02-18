@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/SynthComponent.h"
 #include "DSP/Osc.h"
+#include "DSP/Delay.h"
 #include "MySynthComponent.generated.h"
 
 // ========================================================================
@@ -14,20 +15,22 @@
 // tone using a DSP oscillator class and implements a single function to set
 // the frequency. 
 // ========================================================================
-
 class MyDelay {
 
 public:
 	MyDelay() {}
 	~MyDelay();
 
-	void WriteSoundData(float* data, int count);
+	void OnGenerateAudio(const TArray<float>& InAudio, TArray<float>& OutAudio);
 	void Init(const int32 SampleRate);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Delay")
+		float DelayValue = 0.00025f;
+
 private:
-	float* buffer;
-	int size;
-	int position;
+	TArray<float> buffer;
+	int32 size;
+	int32 position = 0;
 	float decay;
 };
 
@@ -52,9 +55,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Delay")
 		bool DelayToggle = true;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Delay")
-		float DelayValue = 1.0f;
 
 
 protected:
