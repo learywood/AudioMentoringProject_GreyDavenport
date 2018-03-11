@@ -21,28 +21,42 @@ MyDelay::~MyDelay() {
 
 void MyDelay::OnGenerateAudio(const TArray<float>& InAudio, TArray<float>& OutAudio)
 {
-	float Hold = InAudio[position];
-	OutAudio[position] = (InAudio[position] + buffer[position]) * 0.5f;
-	UE_LOG(LogTemp, Warning, TEXT("This is the current position = %d"), position);
-	UE_LOG(LogTemp, Warning, TEXT("This is the current buffer at ^^^ = %d"), buffer[position]);
-	buffer[position] = Hold;
-	//UE_LOG(LogTemp, Warning, TEXT("Yep %d"), buffer[position]);
-	
-	position++;
-	if (position == size)
+	const float readDelayedPosition = delayS*sampleRate;
+	readPosition = writePosition;
+	readPosition -= readDelayedPosition;
+	if (readPosition < 0)
 	{
-		position = 0;
+		readPosition += buffer.Num();
+	}
+
+	for (int idxi = 0; idxi < InAudio.Num(); idxi++)
+	{
+		buffer[writePosition] = InAudio[idxi];
+		
+		++writePosition;
+
+		writePosition = writePosition % buffer.Num();
+	
+	}
+
+	for (int idxw = 0; idxw < InAudio.Num(); idxw++)
+	{
+		readPosition = readPosition % buffer.Num();
+
+		OutAudio[idxw] = buffer[readPosition];	
+		readPosition++;
 	}
 
 }
 
 void MyDelay::Init(const int32 SampleRate)
 {
-	
-	size = DelayValue * SampleRate;
-	UE_LOG(LogTemp, Warning, TEXT("This is the Size = %d"), size);
+	size = maxDelayS * SampleRate;
+	sampleRate = SampleRate;
+	//UE_LOG(LogTemp, Warning, TEXT("This is the Size = %d"), size);
 	buffer.Init(0, size);
 	int CurrentIndex = 0;
+	writePosition = 0;
 }
 
 void UMySynthComponent::OnGenerateAudio(TArray<float>& OutAudio)

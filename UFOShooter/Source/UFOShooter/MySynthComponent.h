@@ -23,6 +23,7 @@ public:
 
 	void OnGenerateAudio(const TArray<float>& InAudio, TArray<float>& OutAudio);
 	void Init(const int32 SampleRate);
+	int32 Read(int32 readPosition);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Delay")
 		float DelayValue = 0.00025f;
@@ -30,8 +31,12 @@ public:
 private:
 	TArray<float> buffer;
 	int32 size;
-	int32 position = 0;
-	float decay;
+	int32 writePosition = 0;
+	int32 readPosition = 0;
+	float delayS = 0.5f;
+	
+	int32 sampleRate;
+	const float maxDelayS = 10.0f;
 };
 
 UCLASS(ClassGroup = Synth, meta = (BlueprintSpawnableComponent))
